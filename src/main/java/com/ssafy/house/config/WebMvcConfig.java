@@ -11,7 +11,7 @@ import com.ssafy.house.interceptor.SessionConfirmInterceptor;
 
 @Configuration
 @MapperScan(basePackages = "com.ssafy.house.model.mapper")
-@EnableAspectJAutoProxy
+
 public class WebMvcConfig implements WebMvcConfigurer {
 	@Autowired
 	SessionConfirmInterceptor interceptor;

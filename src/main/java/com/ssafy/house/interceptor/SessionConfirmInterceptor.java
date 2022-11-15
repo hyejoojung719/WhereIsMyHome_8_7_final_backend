@@ -9,6 +9,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.ssafy.house.dto.User;
 
+@Component
 public class SessionConfirmInterceptor implements HandlerInterceptor{
 		
 	@Override
