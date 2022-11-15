@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.house.model.mapper.ApartMapper">
+
+	<select id="getApartInfo" parameterType="map" resultType="apart">
+		select hi.aptCode, hi.buildYear, hi.apartmentName, hi.dong, hd.floor, hd.dealAmount, hd.dealYear,hd.dealMonth, hd.area, hi.jibun, hi.lng, hi.lat 
+		from houseinfo hi 
+		join housedeal hd 
+		on hi.aptCode = hd.aptCode  
+		where left(hi.dongCode,8)=#{dongcode} and dealYear=#{year} and dealMonth=#{month}
+	</select>
+	
+	<select id="getMyApartInfo" parameterType="map" resultType="apart">
+		select distinct hi.aptCode, hi.buildYear, hi.apartmentName, hi.dong, hi.jibun 
+		from houseinfo hi 
+		join housedeal hd 
+		on hi.aptCode = hd.aptCode
+		where hi.aptCode in (select aptCode from myhouse where user_id = #{user_id})
+	</select>
+	
+	<insert id="insertMyApart" parameterType="map">
+		insert into myhouse (user_id, aptCode) values(#{user_id}, #{ac})
+	</insert>
+	
+	<delete id="delMyApart" parameterType="map">
+		delete from myhouse where aptCode = #{ac} and user_id = #{user_id}
+	</delete>
+</mapper>

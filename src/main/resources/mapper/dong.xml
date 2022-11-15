@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.house.model.mapper.DongMapper">
+
+	<resultMap type="dong" id="donginfo">
+		<result column="dongCode" property="dongCode" />
+		<result column="sidoName" property="sidoName" />
+		<result column="gugunName" property="gugunName" />
+		<result column="dongName" property="dongName" />
+	</resultMap>
+	
+	<!-- 시도 정보 가져오기 -->
+	<select id="getSidoName" resultMap="donginfo">
+		select * from dongcode where right(dongCode,8) = '00000000'
+	</select>
+	
+	<!-- 구군 정보 가져오기 -->
+	<select id="getGugunName" parameterType="String" resultMap="donginfo">
+		select * from dongcode where left(dongcode,2) = ${sidocode} and dongName is null and gugunName is not null
+	</select>
+	
+	<!-- 동 정보 가져오기 -->
+	<select id="getDongName" parameterType="String" resultMap="donginfo">
+		select * from dongcode where left(dongcode,5) = ${dongcode} and dongName is not null
+	</select>
+
+</mapper>

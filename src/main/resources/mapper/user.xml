@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.house.model.mapper.UserMapper">
+	
+	<!-- 회원가입 메소드 -->
+	<insert id="insertUser" parameterType="user">
+		insert into user
+		values (#{user_id}, #{user_name}, #{user_password})
+	</insert>
+	
+	<!-- 로그인 체크 -->
+	<select id="signIn" resultType="int" parameterType="user">
+		select count(*)
+		from user
+		where user_id = #{user_id} and user_password = #{user_password}
+	</select>
+	
+	<!-- 회원 정보 조회 -->
+	<!-- 비밀번호 찾기 -->
+	<select id="selectUserInfo" resultType="user" parameterType="HashMap">
+		select * 
+		from user
+		where user_id = #{user_id}
+	</select>
+	
+	<!-- 회원 정보 수정 -->
+	<update id="updateUser" parameterType="user">
+		update user
+		set user_name = #{user_name}, user_password = #{user_password}
+		where user_id = #{user_id}
+	</update>
+	
+	<!-- 회원정보 삭제 -->
+	<delete id="deleteUser" parameterType="HashMap">
+		delete from user
+		where user_id = #{user_id}
+	</delete>
+	
+	<!-- 아이디 중복 체크 -->
+	<select id="idCheck" resultType="int" parameterType="HashMap">
+		select count(user_id)
+		from user
+		where user_id = #{user_id}
+	</select>
+</mapper>

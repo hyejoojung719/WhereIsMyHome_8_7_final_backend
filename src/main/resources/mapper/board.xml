@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.house.model.mapper.BoardMapper">
+
+	<resultMap type="board" id="article">
+		<result column="article_no" property="articleNo" />
+		<result column="user_id" property="userId" />
+		<result column="user_name" property="userName" />
+		<result column="subject" property="subject" />
+		<result column="content" property="content" />
+		<result column="hit" property="hit" />
+		<result column="register_time" property="registerTime" />
+	</resultMap>
+	
+	
+	<!-- 목록 불러오기 -->
+	<select id="listArticle" resultMap="article" parameterType="map">
+		select article_no, user_id,
+		subject, content, hit, register_time
+		from board
+		<if test="word != null and word != ''">
+			<where>
+				<choose>
+					<when test="key == 'subject'">subject like concat('%',#{word},'%')</when>
+					<otherwise>user_id = #{word}</otherwise>
+				</choose>
+			</where>
+		</if>
+	</select>
+
+	<!-- 글 쓰기 -->
+	<insert id="writeArticle" parameterType="board" >
+		insert into
+		board (user_id, subject, content, hit, register_time)
+		values
+		(#{userId}, #{subject}, #{content}, 0, now())
+	</insert>
+
+	<!-- 글 보기 -->
+	<select id="getArticle" parameterType="map" resultMap="article">
+		select
+		article_no, user_id, subject, content, hit, register_time
+		from board
+		where article_no = #{articleNo}
+	</select>
+
+	<!-- 조회수 -->
+	<update id="updateHit" parameterType="map">
+		update board
+		set hit = hit +
+		1
+		where article_no = #{articleNo}
+	</update>
+
+	<!-- 글 수정 -->
+	<update id="modifyArticle" parameterType="board">
+		update board set
+		subject = #{subject}, content = #{content}
+		where article_no =
+		#{articleNo}
+	</update>
+
+	<!-- 글 삭제 -->
+	<delete id="deleteArticle" parameterType="map">
+		delete from board
+		where
+		article_no = #{articleNo}
+	</delete>
+
+</mapper>
