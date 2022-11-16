@@ -15,7 +15,7 @@
 	</resultMap>
 	
 	
-	목록 불러오기
+	<!-- 목록 불러오기 -->
 	<select id="listArticle" resultMap="article" parameterType="map">
 		select article_no, user_id,
 		subject, content, hit, register_time
@@ -30,7 +30,7 @@
 		</if>
 	</select>
 
-	글 쓰기
+	<!-- 글 쓰기 -->
 	<insert id="writeArticle" parameterType="board" >
 		insert into
 		board (user_id, subject, content, hit, register_time)
@@ -38,7 +38,7 @@
 		(#{userId}, #{subject}, #{content}, 0, now())
 	</insert>
 
-	글 보기
+	<!-- 글 보기 -->
 	<select id="getArticle" parameterType="map" resultMap="article">
 		select
 		article_no, user_id, subject, content, hit, register_time
@@ -46,7 +46,7 @@
 		where article_no = #{articleNo}
 	</select>
 
-	조회수
+	<!-- 조회수 -->
 	<update id="updateHit" parameterType="map">
 		update board
 		set hit = hit +
@@ -54,7 +54,7 @@
 		where article_no = #{articleNo}
 	</update>
 
-	글 수정
+	<!-- 글 수정 -->
 	<update id="modifyArticle" parameterType="board">
 		update board set
 		subject = #{subject}, content = #{content}
@@ -62,7 +62,7 @@
 		#{articleNo}
 	</update>
 
-	글 삭제
+	<!-- 글 삭제 -->
 	<delete id="deleteArticle" parameterType="map">
 		delete from board
 		where

@@ -40,9 +40,9 @@ public class ApartController {
 
 	// 아파트 정보 불러오기
 	@GetMapping("/apartInfo")
-	public ResponseEntity<?> getApartInfo(@RequestParam("dongcode") String dongcode,
-			@RequestParam("year") String year,
-			@RequestParam("month") String month,
+	public ResponseEntity<?> getApartInfo(@RequestParam("dongCode") String dongcode,
+//			@RequestParam("year") String year,
+//			@RequestParam("month") String month,
 			HttpServletRequest request) {
 
 		log.debug("getApartInfo() 메소드 실행 ");
@@ -50,8 +50,8 @@ public class ApartController {
 		// getApartInfo 매개변수 위한 map
 		HashMap<String, Object> map1 = new HashMap<String, Object>();
 		map1.put("dongcode", dongcode);
-		map1.put("year", year);
-		map1.put("month", month);
+//		map1.put("year", year);
+//		map1.put("month", month);
 
 		// 찜목록 가져오기
 		HttpSession session = request.getSession();
