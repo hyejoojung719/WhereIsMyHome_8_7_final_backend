@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.ssafy.house.interceptor.SessionConfirmInterceptor;
 
 @Configuration
-@MapperScan(basePackages = "com.ssafy.house.model.mapper")
+@MapperScan(basePackages= {"com.ssafy.house.model.mapper"})
 
 public class WebMvcConfig implements WebMvcConfigurer {
 	@Autowired
