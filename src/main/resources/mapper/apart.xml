@@ -27,4 +27,4 @@
 	<delete id="delMyApart" parameterType="map">
 		delete from myhouse where aptCode = #{ac} and user_id = #{user_id}
 	</delete>
-</mapper>
+</mapper> 

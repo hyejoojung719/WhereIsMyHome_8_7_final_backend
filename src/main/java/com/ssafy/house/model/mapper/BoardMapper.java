@@ -4,11 +4,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import com.ssafy.house.dto.Board;
 
-@Mapper
+
 public interface BoardMapper {
 
 	int writeArticle(Board board) throws SQLException;
