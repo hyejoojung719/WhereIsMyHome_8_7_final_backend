@@ -1,6 +1,9 @@
 package com.ssafy.house.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -22,28 +25,49 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ssafy.house.dto.User;
 import com.ssafy.house.model.service.UserService;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/users")
 @Slf4j
 public class UserController {
 	@Autowired
 	UserService userService;
+	
+	final static int EXPIRE_MINUTES = 30; //30분 간격으로 재로그인 필요
+	final static String SECRET_KEY = "";
 
 	// **************************** Fetch Method ******************************
 	// 로그인 => 회원인지 체크 후 세션 처리
 	@ResponseBody
-	@GetMapping
-	public ResponseEntity<?> signIn(Model model, HttpSession session, User user) throws SQLException {
+	@PostMapping(value = "/signIn")
+	public ResponseEntity<?> signIn(@RequestBody User user) throws SQLException, UnsupportedEncodingException {
 		log.debug("signIn() 메소드 요청");
 		log.debug("id : {} pwd : {}", user.getUser_id(), user.getUser_password());
 
 		boolean check = userService.signIn(user);
 
 		if (check) {
-			session.setAttribute("userId", user.getUser_id());
-			return new ResponseEntity<Void>(HttpStatus.OK);
+			
+			String token = Jwts.builder()
+					//Header
+					.setHeaderParam("typ", "JWT")
+					.setHeaderParam("alg", "HS256")
+					//Payload
+					.claim("id", user.getUser_id())
+					.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * EXPIRE_MINUTES))
+					//signature
+					.signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes("UTF-8"))
+					.compact();
+			
+			log.debug("발급된 토큰 : {}", token);
+			Map<String, String> result = new HashMap<>();
+			result.put("token", token);
+					
+//			session.setAttribute("userId", user.getUser_id());
+			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
 		} else {
 
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
