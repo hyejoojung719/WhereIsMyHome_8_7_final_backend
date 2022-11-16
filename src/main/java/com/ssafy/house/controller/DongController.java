@@ -54,11 +54,12 @@ public class DongController {
 
 	// 구군 정보 가져오기
 	@GetMapping("/gugun")
-	private ResponseEntity<?> getGugunName(@RequestParam("regcode") String regcode) throws SQLException, IOException {
+	private ResponseEntity<?> getGugunName(@RequestParam("sido") String sido) throws SQLException, IOException {
 
 		log.debug("getGugunName() 메소드 실행 ");
+		
 
-		String sidoCode = regcode.split("\\*")[0];
+		String sidoCode = sido;
 		
 		try {
 			List<Dong> list = dongService.getGugunName(sidoCode);
@@ -76,11 +77,11 @@ public class DongController {
 
 	// 동 정보 가져오기
 	@GetMapping("/dong")
-	private ResponseEntity<?> getDongName(@RequestParam("regcode") String regcode) throws SQLException, IOException {
+	private ResponseEntity<?> getDongName(@RequestParam("gugun") String gugun) throws SQLException, IOException {
 
 		log.debug("getDongName() 메소드 실행 ");
 
-		String dongCode = regcode.split("\\*")[0];
+		String dongCode = gugun;
 		
 		try {
 			List<Dong> list = dongService.getDongName(dongCode);
