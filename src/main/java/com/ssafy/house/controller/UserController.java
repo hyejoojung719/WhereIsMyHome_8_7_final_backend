@@ -39,7 +39,7 @@ public class UserController {
 	UserService userService;
 	
 	final static int EXPIRE_MINUTES = 30; //30분 간격으로 재로그인 필요
-	final static String SECRET_KEY = "";
+	final static String SECRET_KEY = "CARR0TCHEE2ECAK3@@E";
 
 	// **************************** Fetch Method ******************************
 	// 로그인 => 회원인지 체크 후 세션 처리
@@ -109,7 +109,7 @@ public class UserController {
 	}
 
 	// 아이디 중복 체크
-	@RequestMapping(value = "/idCheck")
+	@GetMapping(value = "/check")
 	@ResponseBody
 	public ResponseEntity<?> idCheck(Model model, @RequestParam String user_id) throws SQLException {
 		log.debug("idCheck() 메소드 요청");
