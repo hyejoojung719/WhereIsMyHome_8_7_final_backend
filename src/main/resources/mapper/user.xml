@@ -7,7 +7,7 @@
 	<!-- 회원가입 메소드 -->
 	<insert id="insertUser" parameterType="user">
 		insert into user
-		values (#{user_id}, #{user_name}, #{user_password})
+		values (#{user_id}, #{user_name}, #{user_password}, #{user_birth})
 	</insert>
 	
 	<!-- 로그인 체크 -->

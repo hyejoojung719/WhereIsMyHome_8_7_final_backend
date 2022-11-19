@@ -96,7 +96,7 @@ public class UserController {
 
 	// 회원 가입 => 중복된 회원인지 체크, db에 회원 정보 등록
 	@ResponseBody
-	@PostMapping(value = "/signUp")
+	@PostMapping
 	public ResponseEntity<?> signUp(Model model, @RequestBody User user) throws SQLException {
 		log.debug("signUp() 메소드 요청");
 		log.debug("user : {}", user.toString());
