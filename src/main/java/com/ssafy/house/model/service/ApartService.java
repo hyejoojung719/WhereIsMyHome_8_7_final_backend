@@ -15,4 +15,8 @@ public interface ApartService {
 
 	int delMyApart(HashMap<String, Object> map) throws Exception;
 
+	List<Apart> getCurApart(HashMap<String, Object> map) throws Exception;
+
+	List<Apart> searchApart(HashMap<String, Object> map) throws Exception;
+
 }

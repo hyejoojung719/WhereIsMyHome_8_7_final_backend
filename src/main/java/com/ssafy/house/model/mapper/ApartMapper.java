@@ -16,6 +16,10 @@ public interface ApartMapper {
 	int insertMyApart(HashMap<String, Object> map) throws SQLException;
 	
 	int delMyApart(HashMap<String, Object> map) throws SQLException;
+
+	List<Apart> getCurApart(HashMap<String, Object> map) throws SQLException;
+
+	List<Apart> searchApart(HashMap<String, Object> map) throws SQLException;
 	
 
 }

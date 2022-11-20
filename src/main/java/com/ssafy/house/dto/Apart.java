@@ -15,6 +15,6 @@ public class Apart {
 	private int dealMonth; 	// 거래 월(housedeal)
 	private String area;	// 면적(housedeal)
 	private String jibun; 	// 지번(houseinfo)
-	private String lng;	// 위도(houseinfo)
-	private String lat;	// 경도(houseinfo)
+	private String lng;	// 경도(houseinfo)
+	private String lat;	// 위도(houseinfo)
 }

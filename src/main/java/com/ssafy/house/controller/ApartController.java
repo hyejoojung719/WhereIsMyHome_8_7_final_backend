@@ -38,11 +38,64 @@ public class ApartController {
 	@Autowired
 	ServletContext servletContext;
 
+	// 현재 위치안에 있는 아파트 목록 불러오기 
+	@GetMapping("/curApart")
+	public ResponseEntity<?> getCurApart(@RequestParam("curlat") String curlat, @RequestParam("curlng") String curlng) {
+
+		log.debug("getCurApart() 메소드 실행 ");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("curlat", curlat);
+		map.put("curlng", curlng);
+
+
+		try {
+			List<Apart> list = new ArrayList<Apart>();
+
+			// 전체 아파트 정보 
+			list = apartService.getCurApart(map);
+
+			if(list != null && !list.isEmpty()) {
+				return new ResponseEntity<List<Apart>>(list, HttpStatus.OK);
+			}else {
+				return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return exceptionHandling(e);
+		}
+	}
+
+	// 아파트 검색 기능
+	@GetMapping("/search")
+	public ResponseEntity<?> searchApart(@RequestParam("keyword") String keyword) {
+
+		log.debug("searchApart() 메소드 실행 ");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("keyword", keyword);
+
+		try {
+			List<Apart> list = new ArrayList<Apart>();
+
+			// 전체 아파트 정보 
+			list = apartService.searchApart(map);
+
+			if(list != null && !list.isEmpty()) {
+				return new ResponseEntity<List<Apart>>(list, HttpStatus.OK);
+			}else {
+				return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return exceptionHandling(e);
+		}
+	}
+
+
 	// 아파트 정보 불러오기
 	@GetMapping("/apartInfo")
 	public ResponseEntity<?> getApartInfo(@RequestParam("dongCode") String dongcode,
-//			@RequestParam("year") String year,
-//			@RequestParam("month") String month,
+			//			@RequestParam("year") String year,
+			//			@RequestParam("month") String month,
 			HttpServletRequest request) {
 
 		log.debug("getApartInfo() 메소드 실행 ");
@@ -50,8 +103,8 @@ public class ApartController {
 		// getApartInfo 매개변수 위한 map
 		HashMap<String, Object> map1 = new HashMap<String, Object>();
 		map1.put("dongcode", dongcode);
-//		map1.put("year", year);
-//		map1.put("month", month);
+		//		map1.put("year", year);
+		//		map1.put("month", month);
 
 		// 찜목록 가져오기
 		HttpSession session = request.getSession();
@@ -97,19 +150,19 @@ public class ApartController {
 
 		// 현재 찜 목록
 		List<Apart> list = apartService.getMyApartInfo(map);
-		
+
 		System.out.println("현재 저장되어있는 찜 목록");
 		for (Apart apart : list) {
 			System.out.print(apart.getAptCode() + " : ");
 		}
 		System.out.println();
-		
+
 		System.out.println("내가 찜한 것까지 포함한 찜 목록");
 		for (String apart : ckList) {
 			System.out.print(apart + " : ");
 		}
 		System.out.println();
-		
+
 
 		// 아예 저장된 게 없으면 그냥 추가
 		if(list.size()==0) {
@@ -117,11 +170,11 @@ public class ApartController {
 				HashMap<String, Object> map2 = new HashMap<String, Object>();
 				map2.put("user_id", user_id);
 				map2.put("ac", ac);
-				
+
 				int cnt = apartService.insertMyApart(map2);
 			}
 		}else {
-			
+
 			// 관심 지역 추가
 			for (String ac : ckList) {
 				boolean flag = false;
@@ -136,12 +189,12 @@ public class ApartController {
 					HashMap<String, Object> map2 = new HashMap<String, Object>();
 					map2.put("user_id", user_id);
 					map2.put("ac", ac);
-					
+
 					System.out.println(ac+" 추가");
 					int cnt = apartService.insertMyApart(map2);
 				}
 			}
-			
+
 			// 관심 지역 삭제
 			for (Apart apart : list) {
 				boolean flag = false;
@@ -161,11 +214,11 @@ public class ApartController {
 					int cnt = apartService.delMyApart(map2);
 				}
 			}
-			
+
 		}
 
 	}
-	
+
 	// 관심 아파트 목록 불러오기
 	@GetMapping
 	public ResponseEntity<?> listMyApart(HttpSession session) throws Exception{
@@ -176,7 +229,7 @@ public class ApartController {
 			String userId = (String) session.getAttribute("userId");
 			map.put("user_id", userId);
 			List<Apart> list = apartService.getMyApartInfo(map);
-			
+
 			if(list != null && !list.isEmpty()) {
 				return new ResponseEntity<List<Apart>>(list, HttpStatus.OK);
 			}else {
@@ -191,17 +244,17 @@ public class ApartController {
 	// 관심 아파트 삭제하기
 	@DeleteMapping("{aptCode}")
 	public void deleteMyApart(@PathVariable("aptCode") String aptCode, HttpSession session) throws Exception {
-		
-			log.debug("deleteMyApart() 메소드 실행"); 
-		
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			String userId = (String) session.getAttribute("userId");
-			map.put("user_id", userId);
-			map.put("ac", aptCode);
-			
-			apartService.delMyApart(map);
+
+		log.debug("deleteMyApart() 메소드 실행"); 
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		String userId = (String) session.getAttribute("userId");
+		map.put("user_id", userId);
+		map.put("ac", aptCode);
+
+		apartService.delMyApart(map);
 	}
-	
+
 	// alt + shift + m 눌러서 중복된 코드를 대체 가능
 	private ResponseEntity<String> exceptionHandling(Exception e) {
 		return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

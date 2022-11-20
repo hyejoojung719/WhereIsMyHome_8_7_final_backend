@@ -38,5 +38,19 @@ public class ApartServiceImpl implements ApartService{
 	public int delMyApart(HashMap<String, Object> map) throws Exception {
 		return apartMapper.delMyApart(map);
 	}
+
+	// 현재 위치 아파트 불러오기
+	@Override
+	public List<Apart> getCurApart(HashMap<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		return apartMapper.getCurApart(map);
+	}
+
+	// 아파트 검색 기능 
+	@Override
+	public List<Apart> searchApart(HashMap<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		return apartMapper.searchApart(map);
+	}
 	
 }
