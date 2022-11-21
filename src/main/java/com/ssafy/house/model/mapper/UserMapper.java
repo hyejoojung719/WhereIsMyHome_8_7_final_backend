@@ -8,6 +8,8 @@ import com.ssafy.house.dto.User;
 
 public interface UserMapper {
 	int insertUser(User user) throws SQLException;
+	
+	int insertRole(User user) throws SQLException;
 
 	int signIn(User user) throws SQLException;
 

@@ -18,7 +18,11 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public int insertUser(User user) throws SQLException {
-		return userMapper.insertUser(user);
+		int cnt_user = userMapper.insertUser(user);
+		int cnt_role = userMapper.insertRole(user);
+		
+		if(cnt_user == 1 && cnt_role == 1) return 1;
+		else return 0;
 	}
 
 	@Override

@@ -2,12 +2,16 @@ package com.ssafy.house.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -75,7 +80,7 @@ public class UserController {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
 	// 비밀번호 찾기
 	@ResponseBody
 	@PostMapping(value = "/findPwd")
@@ -119,21 +124,20 @@ public class UserController {
 		return new ResponseEntity<Integer>(cnt, HttpStatus.OK);
 	}
 
-	// 로그아웃 -> 로그아웃 -> 세션 삭제 및 메인페이지 이동
-	@ResponseBody
-	@GetMapping(value = "/signOut")
-	public ResponseEntity<?> signOut(HttpSession session) {
-		log.debug("signOut() 메소드 요청");
-		session.removeAttribute("userId");
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
 
 	// 마이페이지 이동 => 회원 정보 가져오기
 	@ResponseBody
 	@RequestMapping(value = "/myPage")
-	public ResponseEntity<?> myPage(Model model, HttpSession session) throws SQLException {
+	public ResponseEntity<?> myPage(Model model, @RequestHeader(value="access-token") String token) throws SQLException, ParseException {
 		log.debug("myPage() 메소드 요청");
-		String id = (String) session.getAttribute("userId");
+		String decodedToken = new String(Base64.getDecoder().decode(token.split("\\.")[1]));
+		
+		//JSONParser 생성
+		JSONParser jsonParser = new JSONParser();
+		//JSONParser를 통해 JSONObject 생성
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(decodedToken);
+		//userId 값 추출
+		String id = (String) jsonObject.get("userId");
 
 		User user = userService.selectUserInfo(id);
 		return new ResponseEntity<User>(user, HttpStatus.OK);
