@@ -63,7 +63,7 @@ public class UserController {
 					.setHeaderParam("typ", "JWT")
 					.setHeaderParam("alg", "HS256")
 					//Payload
-					.claim("id", user.getUser_id())
+					.claim("userId", user.getUser_id())
 					.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * EXPIRE_MINUTES))
 					//signature
 					.signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes("UTF-8"))
