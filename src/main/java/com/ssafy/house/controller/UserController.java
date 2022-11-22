@@ -38,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping(value = "/users")
 @Slf4j
-@CrossOrigin("http://localhost:8080")
 public class UserController {
 	@Autowired
 	UserService userService;
