@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 // houseinfo 테이블이랑 housedeal 테이블 조인
 public class Apart {
-	private String aptCode;	// 아파트 코드	(houseinfo, housedeal)
+	private long aptCode;	// 아파트 코드	(houseinfo, housedeal)
 	private int buildYear; 	// 설립년도(houseinfo)
 	private String apartmentName; // 아파트 이름(houseinfo)
 	private String dong;	// 동(houseinfo)

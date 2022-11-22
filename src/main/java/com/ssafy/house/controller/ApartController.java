@@ -1,7 +1,6 @@
 package com.ssafy.house.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,14 +18,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.house.dto.Apart;
-import com.ssafy.house.dto.Board;
 import com.ssafy.house.model.service.ApartService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+@RestController
 @RequestMapping(value="/apart")
 @Slf4j
 public class ApartController {
@@ -137,82 +135,54 @@ public class ApartController {
 	}
 
 	// 관심 아파트 등록하기
-	@PostMapping("/ckApart")
-	public void addCkApart(@RequestBody String[] ckList, HttpServletRequest request) throws Exception {
+	@PostMapping("/myHouse")
+	public void insertMyApart(@RequestBody Apart house/*@RequestBody String[] ckList , HttpServletRequest request*/) throws Exception {
 
 		log.debug("addCkApart() 메소드 실행 ");
 
-		HttpSession session = request.getSession();
-		String user_id = (String) session.getAttribute("userId");
+
+		// === 나연이한테 물어보고 하기
+		//		HttpSession session = request.getSession();
+		//		String user_id = (String) session.getAttribute("userId");
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("user_id", user_id);
+		//		map.put("user_id", user_id);
+		map.put("user_id", "ssafy@ssafy.com");
+
 
 		// 현재 찜 목록
 		List<Apart> list = apartService.getMyApartInfo(map);
 
-		System.out.println("현재 저장되어있는 찜 목록");
-		for (Apart apart : list) {
-			System.out.print(apart.getAptCode() + " : ");
-		}
-		System.out.println();
-
-		System.out.println("내가 찜한 것까지 포함한 찜 목록");
-		for (String apart : ckList) {
-			System.out.print(apart + " : ");
-		}
-		System.out.println();
-
-
 		// 아예 저장된 게 없으면 그냥 추가
 		if(list.size()==0) {
-			for (String ac : ckList) {
-				HashMap<String, Object> map2 = new HashMap<String, Object>();
-				map2.put("user_id", user_id);
-				map2.put("ac", ac);
+			HashMap<String, Object> map2 = new HashMap<String, Object>();
+			map2.put("user_id", "ssafy@ssafy.com");
+			map2.put("aptCode", house.getAptCode());
 
-				int cnt = apartService.insertMyApart(map2);
-			}
+			apartService.insertMyApart(map2);
 		}else {
-
 			// 관심 지역 추가
-			for (String ac : ckList) {
-				boolean flag = false;
-				for (Apart apart : list) {
-					if(ac.equals(apart.getAptCode())) {
-						// 현재 저장되어 있는 찜 목록에 내가 찜한 것 까지 포함한 찜 목록이 있다면 
-						flag = true;
-					}
-				}
-				if(!flag) {
-					// 현재 저장된 찜 목록에 없는 것이므로 추가하기
-					HashMap<String, Object> map2 = new HashMap<String, Object>();
-					map2.put("user_id", user_id);
-					map2.put("ac", ac);
-
-					System.out.println(ac+" 추가");
-					int cnt = apartService.insertMyApart(map2);
+			boolean flag = false; 
+			for (int i = 0; i < list.size(); i++) {
+				if(list.get(i).getAptCode() == house.getAptCode()) {
+					flag = true;
 				}
 			}
 
-			// 관심 지역 삭제
-			for (Apart apart : list) {
-				boolean flag = false;
-				for (String ac : ckList) {
-					if(ac.equals(apart.getAptCode())) {
-						// 현재 저장되어 있는 찜 목록중에 내가 찜한 것 까지 포함한 찜 목록에 있다면
-						flag = true;
-					}
-				}
-				if(!flag) {
-					// 현재 저장된 찜목록에 있는게 내가 찜한 목록에 없으므로 삭제
-					HashMap<String, Object> map2 = new HashMap<String, Object>();
-					map2.put("user_id", user_id);
-					map2.put("ac", apart.getAptCode());
+			// 존재하지 않는 관심 지역 정보면 
+			if(!flag) {
+				HashMap<String, Object> map2 = new HashMap<String, Object>();
+				map2.put("user_id", "ssafy@ssafy.com");
+				map2.put("aptCode", house.getAptCode());
 
-					System.out.println(apart.getAptCode()+" 삭제");
-					int cnt = apartService.delMyApart(map2);
-				}
+				apartService.insertMyApart(map2);
+			}else {
+				// 이미 존재하는 관심 지역 정보면 삭제한다. 
+				HashMap<String, Object> map2 = new HashMap<String, Object>();
+				map2.put("user_id", "ssafy@ssafy.com");
+				map2.put("ac", house.getAptCode());
+
+				apartService.delMyApart(map2);
 			}
 
 		}
@@ -220,14 +190,20 @@ public class ApartController {
 	}
 
 	// 관심 아파트 목록 불러오기
-	@GetMapping
-	public ResponseEntity<?> listMyApart(HttpSession session) throws Exception{
+	@GetMapping("/myHouse")
+	public ResponseEntity<?> listMyApart(@RequestParam("user_id") String user_id/*HttpSession session*/) throws Exception{
 		log.debug("listMyApart() 메소드 실행 ");
 
+		// === 나연이한테 물어보고 하기
+		//		HttpSession session = request.getSession();
+		//		String user_id = (String) session.getAttribute("userId");
+
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("user_id", user_id);	
+
+		log.debug("user_id 정보 {} ", user_id);
+
 		try {
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			String userId = (String) session.getAttribute("userId");
-			map.put("user_id", userId);
 			List<Apart> list = apartService.getMyApartInfo(map);
 
 			if(list != null && !list.isEmpty()) {
