@@ -40,23 +40,23 @@ public class BoardController {
 
 	// **************************** Fetch Method ******************************
 	// 글 목록 불러오기
-	@GetMapping
+	@GetMapping("/list")
 	public ResponseEntity<?> listArticle(
-			@RequestParam("key") String key, @RequestParam("word") String word) throws Exception{
+			/*@RequestParam("key") String key, @RequestParam("word") String word*/) throws Exception{
 		log.debug("listArticle() 메소드 실행 ");
 
 		try {
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("key", key);
-			map.put("word", word);
-			List<Board> list = boardService.listArticle(map);
+//			HashMap<String, Object> map = new HashMap<String, Object>();
+//			map.put("key", key);
+//			map.put("word", word);
+			List<Board> list = boardService.listArticle();
 			
-			log.debug("key는 {}", key);
-			log.debug("word는 {}", word);
+//			log.debug("key는 {}", key);
+//			log.debug("word는 {}", word);
 			log.debug("list는 {}", list);
 			
 			
-			log.debug("목록 데이터 :{}",list.toString());
+//			log.debug("목록 데이터 :{}",list.toString());
 			if(list != null && !list.isEmpty()) {
 				//	목록을 얻어왔거나, 얻어왔는데 비어있지 않다면
 				return new ResponseEntity<List<Board>>(list, HttpStatus.OK);

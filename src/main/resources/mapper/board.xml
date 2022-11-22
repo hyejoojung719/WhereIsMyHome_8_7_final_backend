@@ -16,18 +16,16 @@
 	
 	
 	<!-- 목록 불러오기 -->
-	<select id="listArticle" resultMap="article" parameterType="map">
-		select article_no, user_id,
-		subject, content, hit, register_time
-		from board
-		<if test="word != null and word != ''">
+	<select id="listArticle" resultMap="article">
+		select * from board
+		<!-- <if test="word != null and word != ''">
 			<where>
 				<choose>
 					<when test="key == 'subject'">subject like concat('%',#{word},'%')</when>
 					<otherwise>user_id = #{word}</otherwise>
 				</choose>
 			</where>
-		</if>
+		</if> -->
 	</select>
 
 	<!-- 글 쓰기 -->

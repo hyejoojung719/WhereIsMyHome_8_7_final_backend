@@ -21,8 +21,8 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public List<Board> listArticle(Map<String, Object> map) throws Exception {
-		return boardMapper.listArticle(map);
+	public List<Board> listArticle() throws Exception {
+		return boardMapper.listArticle();
 	}
 
 	@Override
