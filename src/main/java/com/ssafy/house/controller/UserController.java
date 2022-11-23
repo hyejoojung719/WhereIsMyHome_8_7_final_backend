@@ -69,11 +69,15 @@ public class UserController {
 					.compact();
 			
 			log.debug("발급된 토큰 : {}", token);
-			Map<String, String> result = new HashMap<>();
+			
+			User userInfo = userService.selectUserInfoNoPassword(user.getUser_id());
+			
+			Map<String,Object> result = new HashMap<>();
 			result.put("token", token);
+			result.put("userInfo", userInfo);
 					
 //			session.setAttribute("userId", user.getUser_id());
-			return new ResponseEntity<Map<String, String>>(result, HttpStatus.OK);
+			return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 		} else {
 
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -126,7 +130,7 @@ public class UserController {
 
 	// 마이페이지 이동 => 회원 정보 가져오기
 	@ResponseBody
-	@RequestMapping(value = "/myPage")
+	@GetMapping
 	public ResponseEntity<?> myPage(Model model, @RequestHeader(value="access-token") String token) throws SQLException, ParseException {
 		log.debug("myPage() 메소드 요청");
 		String decodedToken = new String(Base64.getDecoder().decode(token.split("\\.")[1]));
@@ -136,15 +140,15 @@ public class UserController {
 		//JSONParser를 통해 JSONObject 생성
 		JSONObject jsonObject = (JSONObject) jsonParser.parse(decodedToken);
 		//userId 값 추출
-		String id = (String) jsonObject.get("userId");
+		String user_id = (String) jsonObject.get("userId");
 
-		User user = userService.selectUserInfo(id);
+		User user = userService.selectUserInfoNoPassword(user_id);
 		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 	
 	// 회원 정보 업데이트
 	@ResponseBody
-	@PutMapping(value = "/updateUser")
+	@PutMapping
 	public ResponseEntity<?> updateUser(Model model, @RequestBody User user) throws SQLException {
 		log.debug("updateUser() 메소드 요청");
 		log.debug("user : {}", user.toString());
@@ -152,6 +156,21 @@ public class UserController {
 		
 		if(cnt == 1) {
 			return new ResponseEntity<User>(user, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	//비밀번호 업데이트
+	@ResponseBody
+	@PutMapping("/pass")
+	public ResponseEntity<?> updatePassword(@RequestBody User user) throws SQLException {
+		log.debug("updatePassword() 메소드 요청");
+		log.debug("user : {}", user.toString());
+		int cnt = userService.updatePassword(user);
+		
+		if(cnt == 1) {
+			return new ResponseEntity<Void>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

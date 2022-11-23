@@ -16,7 +16,6 @@
 		values (#{user_id})
 	</insert>
 	
-	
 	<!-- 로그인 체크 -->
 	<select id="signIn" resultType="int" parameterType="user">
 		select count(*)
@@ -27,15 +26,29 @@
 	<!-- 회원 정보 조회 -->
 	<!-- 비밀번호 찾기 -->
 	<select id="selectUserInfo" resultType="user" parameterType="HashMap">
-		select * 
+		select *
 		from user
 		where user_id = #{user_id}
 	</select>
 	
-	<!-- 회원 정보 수정 -->
+	<!-- 회원 정보 조회 (비밀번호 X) -->
+	<select id="selectUserInfoNoPassword" resultType="user" parameterType="HashMap">
+		select user_id, user_name, user_birth
+		from user
+		where user_id = #{user_id}
+	</select>
+	
+	<!-- 회원 정보 수정(비밀번호 X) -->
 	<update id="updateUser" parameterType="user">
 		update user
-		set user_name = #{user_name}, user_password = #{user_password}, user_birth = #{user_birth}
+		set user_name = #{user_name}, user_birth = #{user_birth}
+		where user_id = #{user_id}
+	</update>
+	
+	<!-- 회원 정보 수정(비밀번호) -->
+	<update id="updatePassword" parameterType="user">
+		update user
+		set user_password = #{user_password}
 		where user_id = #{user_id}
 	</update>
 	

@@ -14,8 +14,12 @@ public interface UserMapper {
 	int signIn(User user) throws SQLException;
 
 	User selectUserInfo(Map<String, Object> map) throws SQLException;
+	
+	User selectUserInfoNoPassword(Map<String, Object> map) throws SQLException;
 
 	int updateUser(User user) throws SQLException;
+	
+	int updatePassword(User user) throws SQLException;
 
 	int deleteUser(Map<String, Object> map) throws SQLException;
 

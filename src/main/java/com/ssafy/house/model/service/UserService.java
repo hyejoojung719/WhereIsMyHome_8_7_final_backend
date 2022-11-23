@@ -10,8 +10,12 @@ public interface UserService {
 	boolean signIn(User user) throws SQLException;
 
 	User selectUserInfo(String user_id) throws SQLException;
+	
+	User selectUserInfoNoPassword(String user_id) throws SQLException;
 
 	int updateUser(User user) throws SQLException;
+	
+	int updatePassword(User user) throws SQLException;
 
 	int deleteUser(String user_id) throws SQLException;
 

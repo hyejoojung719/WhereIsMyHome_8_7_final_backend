@@ -39,10 +39,23 @@ public class UserServiceImpl implements UserService {
 		
 		return userMapper.selectUserInfo(map);
 	}
-
+	
+	@Override
+	public User selectUserInfoNoPassword(String user_id) throws SQLException {
+		Map<String, Object> map = new HashMap<String,Object>();
+		map.put("user_id", user_id);
+		
+		return userMapper.selectUserInfoNoPassword(map);
+	}
+	
 	@Override
 	public int updateUser(User user) throws SQLException {
 		return userMapper.updateUser(user);
+	}
+	
+	@Override
+	public int updatePassword(User user) throws SQLException {
+		return userMapper.updatePassword(user);
 	}
 
 	@Override
