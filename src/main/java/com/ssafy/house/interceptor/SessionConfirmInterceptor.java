@@ -4,14 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-
-import com.ssafy.house.dto.User;
 
 @Component
 public class SessionConfirmInterceptor implements HandlerInterceptor{
@@ -19,6 +14,10 @@ public class SessionConfirmInterceptor implements HandlerInterceptor{
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		
+		//OPTIONS 메소드로 넘어오는 preflight 요청은 true로 넘겨줌.
+		if(HttpMethod.OPTIONS.matches(request.getMethod())) return true;
+		
 		
 		//1. 세션에서 유저 정보가 있는지 체크 
 		HttpSession session = request.getSession();

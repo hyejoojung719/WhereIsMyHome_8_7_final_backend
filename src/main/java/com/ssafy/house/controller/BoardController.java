@@ -1,32 +1,32 @@
 package com.ssafy.house.controller;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.house.dto.Board;
 import com.ssafy.house.model.service.BoardService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+@RestController
 @RequestMapping(value="/board")
 @Slf4j
 public class BoardController {
@@ -41,22 +41,15 @@ public class BoardController {
 	// **************************** Fetch Method ******************************
 	// 글 목록 불러오기
 	@GetMapping("/list")
-	public ResponseEntity<?> listArticle(
-			/*@RequestParam("key") String key, @RequestParam("word") String word*/) throws Exception{
+	public ResponseEntity<?> listArticle() throws Exception{
 		log.debug("listArticle() 메소드 실행 ");
 
 		try {
-//			HashMap<String, Object> map = new HashMap<String, Object>();
-//			map.put("key", key);
-//			map.put("word", word);
 			List<Board> list = boardService.listArticle();
 			
-//			log.debug("key는 {}", key);
-//			log.debug("word는 {}", word);
 			log.debug("list는 {}", list);
 			
 			
-//			log.debug("목록 데이터 :{}",list.toString());
 			if(list != null && !list.isEmpty()) {
 				//	목록을 얻어왔거나, 얻어왔는데 비어있지 않다면
 				return new ResponseEntity<List<Board>>(list, HttpStatus.OK);
@@ -75,12 +68,19 @@ public class BoardController {
 	
 	// 글 작성하기
 	@PostMapping
-	public void writeArticle(HttpSession session, @RequestBody Board board) throws Exception{
+	public void writeArticle(@RequestBody Board board, @RequestHeader(value="access-token") String token) throws Exception{
 
 		log.debug("writeArticle() 메소드 실행 ");
 
-		String userId = (String) session.getAttribute("userId");
-		board.setUserId(userId);
+		String decodedToken = new String(Base64.getDecoder().decode(token.split("\\.")[1]));
+
+		//JSONParser 생성
+		JSONParser jsonParser = new JSONParser();
+		//JSONParser를 통해 JSONObject 생성
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(decodedToken);
+		//userId 값 추출
+		String user_id = (String) jsonObject.get("userId");
+		board.setUserId(user_id);
 
 		int cnt = boardService.writeArticle(board);
 	}
@@ -124,6 +124,8 @@ public class BoardController {
 
 			//DB에서 글 가져오기
 			Board board = boardService.getArticle(map);
+			
+			log.debug("board 정보 {}",board);
 			
 			if(board != null) {
 				//	목록을 얻어왔거나, 얻어왔는데 비어있지 않다면

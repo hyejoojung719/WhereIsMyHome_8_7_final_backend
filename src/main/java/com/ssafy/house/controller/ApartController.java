@@ -1,6 +1,7 @@
 package com.ssafy.house.controller;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,6 +9,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +39,8 @@ public class ApartController {
 
 	@Autowired
 	ServletContext servletContext;
+	
+	
 
 	// 현재 위치안에 있는 아파트 목록 불러오기 
 	@GetMapping("/curApart")
@@ -136,18 +142,23 @@ public class ApartController {
 
 	// 관심 아파트 등록하기
 	@PostMapping("/myHouse")
-	public void insertMyApart(@RequestBody Apart house/*@RequestBody String[] ckList , HttpServletRequest request*/) throws Exception {
+	public void insertMyApart(@RequestBody Apart house, @RequestHeader(value="access-token") String token/*@RequestBody String[] ckList , HttpServletRequest request*/) throws Exception {
 
 		log.debug("addCkApart() 메소드 실행 ");
 
 
-		// === 나연이한테 물어보고 하기
-		//		HttpSession session = request.getSession();
-		//		String user_id = (String) session.getAttribute("userId");
+		String decodedToken = new String(Base64.getDecoder().decode(token.split("\\.")[1]));
+
+		//JSONParser 생성
+		JSONParser jsonParser = new JSONParser();
+		//JSONParser를 통해 JSONObject 생성
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(decodedToken);
+		//userId 값 추출
+		String user_id = (String) jsonObject.get("userId");
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		//		map.put("user_id", user_id);
-		map.put("user_id", "ssafy@ssafy.com");
+		map.put("user_id", user_id);
+		//		map.put("user_id", "ssafy@ssafy.com");
 
 
 		// 현재 찜 목록
@@ -191,12 +202,17 @@ public class ApartController {
 
 	// 관심 아파트 목록 불러오기
 	@GetMapping("/myHouse")
-	public ResponseEntity<?> listMyApart(@RequestParam("user_id") String user_id/*HttpSession session*/) throws Exception{
+	public ResponseEntity<?> listMyApart(@RequestHeader(value="access-token") String token/*HttpSession session*/) throws Exception{
 		log.debug("listMyApart() 메소드 실행 ");
 
-		// === 나연이한테 물어보고 하기
-		//		HttpSession session = request.getSession();
-		//		String user_id = (String) session.getAttribute("userId");
+		String decodedToken = new String(Base64.getDecoder().decode(token.split("\\.")[1]));
+
+		//JSONParser 생성
+		JSONParser jsonParser = new JSONParser();
+		//JSONParser를 통해 JSONObject 생성
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(decodedToken);
+		//userId 값 추출
+		String user_id = (String) jsonObject.get("userId");
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("user_id", user_id);	
