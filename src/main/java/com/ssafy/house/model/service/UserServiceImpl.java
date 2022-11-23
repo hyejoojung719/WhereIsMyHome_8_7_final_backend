@@ -2,6 +2,7 @@ package com.ssafy.house.model.service;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,11 @@ public class UserServiceImpl implements UserService {
 		else return false;
 	}
 
+	@Override
+	public List<Map<String, String>> selectUserId(User user) throws SQLException {
+		return userMapper.selectUserId(user);
+	}
+	
 	@Override
 	public User selectUserInfo(String user_id) throws SQLException {
 		Map<String,Object> map = new HashMap<String,Object>();

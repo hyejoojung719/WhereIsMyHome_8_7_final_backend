@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -81,6 +82,16 @@ public class UserController {
 		}
 	}
 
+	//아이디 찾기
+	@ResponseBody
+	@PostMapping(value="/find")
+	public ResponseEntity<?> findid(@RequestBody User user) throws SQLException {
+		log.debug("findid() 메소드 요청");
+		
+		List<Map<String, String>> selectUserList = userService.selectUserId(user);
+		return new ResponseEntity<List<Map<String, String>>>(selectUserList, HttpStatus.OK);
+	}
+	
 	// 비밀번호 찾기
 	@ResponseBody
 	@PostMapping(value = "/findPwd")

@@ -1,6 +1,8 @@
 package com.ssafy.house.model.service;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 import com.ssafy.house.dto.User;
 
@@ -8,6 +10,8 @@ public interface UserService {
 	int insertUser(User user) throws SQLException;
 
 	boolean signIn(User user) throws SQLException;
+	
+	List<Map<String, String>> selectUserId(User user) throws SQLException;
 
 	User selectUserInfo(String user_id) throws SQLException;
 	
