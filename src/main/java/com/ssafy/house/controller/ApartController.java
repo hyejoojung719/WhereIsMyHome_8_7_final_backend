@@ -40,7 +40,29 @@ public class ApartController {
 	@Autowired
 	ServletContext servletContext;
 	
-	
+	// 아파트 상세정보 가져오기 
+	@GetMapping("/detailApart")
+	public ResponseEntity<?> getDetailApart(@RequestParam("aptCode") String aptCode) {
+
+		log.debug("getDetailApart() 메소드 실행 ");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("aptCode", aptCode);
+
+
+		try {
+			// 전체 아파트 정보 
+			Apart apart = apartService.getDetailApart(map);
+
+			if(apart != null) {
+				return new ResponseEntity<Apart>(apart, HttpStatus.OK);
+			}else {
+				return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return exceptionHandling(e);
+		}
+	}
 
 	// 현재 위치안에 있는 아파트 목록 불러오기 
 	@GetMapping("/curApart")

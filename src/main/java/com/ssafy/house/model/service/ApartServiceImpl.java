@@ -53,6 +53,13 @@ public class ApartServiceImpl implements ApartService{
 		return apartMapper.searchApart(map);
 	}
 
+	// 아파트 상세 조회
+	@Override
+	public Apart getDetailApart(HashMap<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		return apartMapper.getDetailApart(map);
+	}
+
 	
 	
 }

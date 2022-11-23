@@ -13,6 +13,7 @@ public class Apart {
 	private String dealamount; // 거래금액(housedeal)
 	private int dealYear; 	// 거래 년도(housedeal)
 	private int dealMonth; 	// 거래 월(housedeal)
+	private int dealDay; 	// 거래 일(housedeal)
 	private String area;	// 면적(housedeal)
 	private String dongCode; // 동코드(houseinfo)
 	private String jibun; 	// 지번(houseinfo)

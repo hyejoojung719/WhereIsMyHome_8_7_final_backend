@@ -21,6 +21,8 @@ public interface ApartMapper {
 
 	List<Apart> searchApart(HashMap<String, Object> map) throws SQLException;
 
+	Apart getDetailApart(HashMap<String, Object> map) throws SQLException;
+
 	
 	
 

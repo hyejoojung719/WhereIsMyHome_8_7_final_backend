@@ -4,50 +4,69 @@
 
 <mapper namespace="com.ssafy.house.model.mapper.ApartMapper">
 
-	
 
 	<select id="getApartInfo" parameterType="map" resultType="apart">
-		SELECT * FROM houseinfo where left(dongCode,8)=#{dongcode};
+		SELECT
+		* FROM houseinfo where left(dongCode,8)=#{dongcode};
 	</select>
 
-<!-- 관심 아파트 기능  시작-->
+	<!-- 관심 아파트 기능 시작 -->
 	<select id="getMyApartInfo" parameterType="map"
 		resultType="apart">
-		select distinct hi.aptCode, hi.buildYear, hi.apartmentName, hi.dong,
+		select distinct hi.aptCode, hi.buildYear, hi.apartmentName,
+		hi.dong,
 		hi.jibun, hi.lng, hi.lat
 		from houseinfo hi
 		join housedeal hd
-		on hi.aptCode = hd.aptCode
-		where hi.aptCode in (select aptCode from myhouse where user_id =
+		on
+		hi.aptCode = hd.aptCode
+		where hi.aptCode in (select aptCode from
+		myhouse where user_id =
 		#{user_id})
 	</select>
-	
+
 	<insert id="insertMyApart" parameterType="map">
-		insert into myhouse (user_id, aptCode) values(#{user_id}, #{aptCode})
+		insert into myhouse
+		(user_id, aptCode) values(#{user_id}, #{aptCode})
 	</insert>
 
 	<delete id="delMyApart" parameterType="map">
-		delete from myhouse where aptCode = #{ac} and user_id = #{user_id}
+		delete from myhouse where
+		aptCode = #{ac} and user_id = #{user_id}
 	</delete>
-<!-- 관심 아파트 끝 -->
+	<!-- 관심 아파트 끝 -->
 
 	<select id="getCurApart" parameterType="map" resultType="apart">
-		select aptCode, apartmentName, lat, lng, dongCode, jibun
-		from (
-		select ( 6371 * acos( cos( radians( #{curlat} ) )
-		* cos( radians(lat))
-		* cos( radians( lng ) - radians(#{curlng}) ) + sin( radians(#{curlat})
-		) * sin( radians(lat) ) ) )
-		AS distance, aptCode, apartmentName, lat, lng, dongCode, jibun
-		FROM houseinfo ) data
-		where data.distance <![CDATA[<]]>
+		select aptCode, apartmentName, lat, lng, dongCode, jibun from (
+		select
+		( 6371 * acos( cos( radians( #{curlat} ) ) * cos( radians(lat)) * cos(
+		radians(
+		lng ) - radians(#{curlng}) ) + sin( radians(#{curlat}) ) *
+		sin(
+		radians(lat)
+		) ) ) AS distance, aptCode, apartmentName, lat, lng,
+		dongCode, jibun
+		FROM
+		houseinfo ) data where data.distance <![CDATA[<]]>
 		1
 	</select>
 
 	<select id="searchApart" parameterType="map" resultType="apart">
-		select apartmentName, lat, lng
+		select
+		apartmentName, lat, lng
 		from houseinfo
-		where apartmentName like CONCAT('%',#{keyword},'%')
+		where apartmentName like
+		CONCAT('%',#{keyword},'%')
+	</select>
+
+	<select id="getDetailApart" parameterType="map" resultType="apart">
+		select
+		hi.aptCode, hi.buildYear, hi.apartmentName, hi.dongCode, 
+		hd.dealAmount, hd.dealYear, hd.dealMonth, hd.dealDay, hd.area, hd.floor
+		from homedb.houseinfo hi
+		join homedb.housedeal hd
+		on hi.aptCode = hd.aptCode
+		where hi.aptCode=#{aptCode};
 	</select>
 
 </mapper>
