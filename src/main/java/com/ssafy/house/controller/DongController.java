@@ -2,7 +2,7 @@ package com.ssafy.house.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -31,6 +31,30 @@ public class DongController {
 	@Autowired
 	ServletContext servletContext;
 
+	// 주소 가져오기
+	@GetMapping("/addr")
+	public ResponseEntity<?> getAddress(@RequestParam("dongCode") String dongCode) {
+
+		log.debug("getAddress() 메소드 실행 ");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("dongcode", dongCode);
+
+
+		try {
+			// 전체 아파트 정보 
+			Dong dong = dongService.getAddress(map);
+
+			if(dong!=null) {
+				return new ResponseEntity<Dong>(dong, HttpStatus.OK);
+			}else {
+				return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return exceptionHandling(e);
+		}
+	}
+
 	// 시도 정보 가져오기
 	@GetMapping("/sido")
 	private ResponseEntity<?> getSidoName() throws SQLException, IOException {
@@ -39,7 +63,7 @@ public class DongController {
 
 		try {
 			List<Dong> list = dongService.getSidoName();
-			
+
 			if(list != null && !list.isEmpty()) {
 				return new ResponseEntity<List<Dong>>(list, HttpStatus.OK);
 			}else {
@@ -57,13 +81,13 @@ public class DongController {
 	private ResponseEntity<?> getGugunName(@RequestParam("sido") String sido) throws SQLException, IOException {
 
 		log.debug("getGugunName() 메소드 실행 ");
-		
+
 
 		String sidoCode = sido;
-		
+
 		try {
 			List<Dong> list = dongService.getGugunName(sidoCode);
-			
+
 			if(list != null && !list.isEmpty()) {
 				return new ResponseEntity<List<Dong>>(list, HttpStatus.OK);
 			}else {
@@ -82,10 +106,10 @@ public class DongController {
 		log.debug("getDongName() 메소드 실행 ");
 
 		String dongCode = gugun;
-		
+
 		try {
 			List<Dong> list = dongService.getDongName(dongCode);
-			
+
 			if(list != null && !list.isEmpty()) {
 				return new ResponseEntity<List<Dong>>(list, HttpStatus.OK);
 			}else {

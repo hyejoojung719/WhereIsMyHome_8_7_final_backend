@@ -1,6 +1,7 @@
 package com.ssafy.house.model.service;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +30,11 @@ public class DongServiceImpl implements DongService {
 	public List<Dong> getDongName(String dongCode) throws Exception {
 		return dongMapper.getDongName(dongCode);
 	}
-	
+
+	// 아파트 주소 가져오기
+	@Override
+	public Dong getAddress(HashMap<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		return dongMapper.getAddress(map);
+	}
 }

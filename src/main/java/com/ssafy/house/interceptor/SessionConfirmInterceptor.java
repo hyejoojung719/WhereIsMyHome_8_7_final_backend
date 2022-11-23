@@ -8,12 +8,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class SessionConfirmInterceptor implements HandlerInterceptor{
 		
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		
+		log.debug("prehandle 들어옴");
 		
 		//OPTIONS 메소드로 넘어오는 preflight 요청은 true로 넘겨줌.
 		if(HttpMethod.OPTIONS.matches(request.getMethod())) return true;

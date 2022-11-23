@@ -52,5 +52,7 @@ public class ApartServiceImpl implements ApartService{
 		// TODO Auto-generated method stub
 		return apartMapper.searchApart(map);
 	}
+
+	
 	
 }

@@ -90,6 +90,11 @@ public class BoardController {
 	public void modifyArticle(@RequestBody Board board) throws Exception{
 
 		log.debug("modifyArticle() 메소드 실행 ");
+		
+		log.debug("글 제목 : ", board.getSubject());
+		log.debug("글 내용 : ", board.getContent());
+		log.debug("글 번호 : ", board.getArticleNo());
+		
 
 		boardService.modifyArticle(board);
 	}

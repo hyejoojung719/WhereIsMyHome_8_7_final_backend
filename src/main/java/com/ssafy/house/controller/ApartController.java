@@ -142,7 +142,7 @@ public class ApartController {
 
 	// 관심 아파트 등록하기
 	@PostMapping("/myHouse")
-	public void insertMyApart(@RequestBody Apart house, @RequestHeader(value="access-token") String token/*@RequestBody String[] ckList , HttpServletRequest request*/) throws Exception {
+	public void insertMyApart(@RequestBody Apart house, @RequestHeader(value="access-token") String token) throws Exception {
 
 		log.debug("addCkApart() 메소드 실행 ");
 
@@ -158,7 +158,6 @@ public class ApartController {
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("user_id", user_id);
-		//		map.put("user_id", "ssafy@ssafy.com");
 
 
 		// 현재 찜 목록
@@ -167,7 +166,7 @@ public class ApartController {
 		// 아예 저장된 게 없으면 그냥 추가
 		if(list.size()==0) {
 			HashMap<String, Object> map2 = new HashMap<String, Object>();
-			map2.put("user_id", "ssafy@ssafy.com");
+			map2.put("user_id", user_id);
 			map2.put("aptCode", house.getAptCode());
 
 			apartService.insertMyApart(map2);
@@ -183,14 +182,14 @@ public class ApartController {
 			// 존재하지 않는 관심 지역 정보면 
 			if(!flag) {
 				HashMap<String, Object> map2 = new HashMap<String, Object>();
-				map2.put("user_id", "ssafy@ssafy.com");
+				map2.put("user_id", user_id);
 				map2.put("aptCode", house.getAptCode());
 
 				apartService.insertMyApart(map2);
 			}else {
 				// 이미 존재하는 관심 지역 정보면 삭제한다. 
 				HashMap<String, Object> map2 = new HashMap<String, Object>();
-				map2.put("user_id", "ssafy@ssafy.com");
+				map2.put("user_id", user_id);
 				map2.put("ac", house.getAptCode());
 
 				apartService.delMyApart(map2);
@@ -202,7 +201,7 @@ public class ApartController {
 
 	// 관심 아파트 목록 불러오기
 	@GetMapping("/myHouse")
-	public ResponseEntity<?> listMyApart(@RequestHeader(value="access-token") String token/*HttpSession session*/) throws Exception{
+	public ResponseEntity<?> listMyApart(@RequestHeader(value="access-token") String token) throws Exception{
 		log.debug("listMyApart() 메소드 실행 ");
 
 		String decodedToken = new String(Base64.getDecoder().decode(token.split("\\.")[1]));

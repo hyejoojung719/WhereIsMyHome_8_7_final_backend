@@ -4,6 +4,8 @@
 
 <mapper namespace="com.ssafy.house.model.mapper.ApartMapper">
 
+	
+
 	<select id="getApartInfo" parameterType="map" resultType="apart">
 		SELECT * FROM houseinfo where left(dongCode,8)=#{dongcode};
 	</select>
@@ -29,15 +31,14 @@
 	</delete>
 <!-- 관심 아파트 끝 -->
 
-
 	<select id="getCurApart" parameterType="map" resultType="apart">
-		select aptCode, apartmentName, lat, lng
+		select aptCode, apartmentName, lat, lng, dongCode, jibun
 		from (
 		select ( 6371 * acos( cos( radians( #{curlat} ) )
 		* cos( radians(lat))
 		* cos( radians( lng ) - radians(#{curlng}) ) + sin( radians(#{curlat})
 		) * sin( radians(lat) ) ) )
-		AS distance, aptCode, apartmentName, lat, lng
+		AS distance, aptCode, apartmentName, lat, lng, dongCode, jibun
 		FROM houseinfo ) data
 		where data.distance <![CDATA[<]]>
 		1

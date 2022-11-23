@@ -19,4 +19,6 @@ public interface ApartService {
 
 	List<Apart> searchApart(HashMap<String, Object> map) throws Exception;
 
+	
+
 }

@@ -20,6 +20,8 @@ public interface ApartMapper {
 	List<Apart> getCurApart(HashMap<String, Object> map) throws SQLException;
 
 	List<Apart> searchApart(HashMap<String, Object> map) throws SQLException;
+
+	
 	
 
 }

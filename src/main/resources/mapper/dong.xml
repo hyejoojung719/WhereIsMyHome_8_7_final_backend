@@ -11,6 +11,11 @@
 		<result column="dongName" property="dongName" />
 	</resultMap>
 	
+	<!-- 현재 주소 가져오기 -->
+	<select id="getAddress" parameterType="map" resultType="dong">
+		SELECT * FROM dongcode where dongCode=#{dongcode};
+	</select>
+	
 	<!-- 시도 정보 가져오기 -->
 	<select id="getSidoName" resultMap="donginfo">
 		select * from dongcode where right(dongCode,8) = '00000000'
