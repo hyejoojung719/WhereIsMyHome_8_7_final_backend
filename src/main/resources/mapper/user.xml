@@ -33,9 +33,11 @@
 	
 	<!-- 회원 정보 조회 (비밀번호 X) -->
 	<select id="selectUserInfoNoPassword" resultType="user" parameterType="HashMap">
-		select user_id, user_name, user_birth
-		from user
-		where user_id = #{user_id}
+		select user.user_id, user_name, user_birth, user_role
+		from user 
+		inner join authority
+		on user.user_id = authority.user_id
+		where user.user_id = #{user_id}
 	</select>
 	
 	<!-- 회원 정보 수정(비밀번호 X) -->
