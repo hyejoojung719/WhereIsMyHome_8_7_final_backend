@@ -40,6 +40,32 @@ public class ApartController {
 	@Autowired
 	ServletContext servletContext;
 	
+	// 아파트 거래금액 가져오기(년도별 최대 금액)
+	@GetMapping("/amount")
+	public ResponseEntity<?> getAmount(@RequestParam("aptCode") String aptCode) {
+
+		log.debug("getAmount() 메소드 실행 ");
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("aptCode", aptCode);
+
+
+		try {
+			List<Apart> list = new ArrayList<Apart>();
+			
+			// 전체 아파트 정보 
+			list = apartService.getAmount(map);
+
+			if(list != null && !list.isEmpty()) {
+				return new ResponseEntity<List<Apart>>(list, HttpStatus.OK);
+			}else {
+				return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return exceptionHandling(e);
+		}
+	}
+	
 	// 아파트 상세정보 가져오기 
 	@GetMapping("/detailApart")
 	public ResponseEntity<?> getDetailApart(@RequestParam("aptCode") String aptCode) {
@@ -50,11 +76,13 @@ public class ApartController {
 
 
 		try {
+			List<Apart> list = new ArrayList<Apart>();
+			
 			// 전체 아파트 정보 
-			Apart apart = apartService.getDetailApart(map);
+			list = apartService.getDetailApart(map);
 
-			if(apart != null) {
-				return new ResponseEntity<Apart>(apart, HttpStatus.OK);
+			if(list != null && !list.isEmpty()) {
+				return new ResponseEntity<List<Apart>>(list, HttpStatus.OK);
 			}else {
 				return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 			}

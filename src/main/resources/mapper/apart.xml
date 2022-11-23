@@ -59,14 +59,34 @@
 		CONCAT('%',#{keyword},'%')
 	</select>
 
-	<select id="getDetailApart" parameterType="map" resultType="apart">
+	<select id="getDetailApart" parameterType="map"
+		resultType="apart">
 		select
-		hi.aptCode, hi.buildYear, hi.apartmentName, hi.dongCode, 
-		hd.dealAmount, hd.dealYear, hd.dealMonth, hd.dealDay, hd.area, hd.floor
-		from homedb.houseinfo hi
+		hi.aptCode, hi.buildYear, hi.apartmentName,
+		hi.dongCode,
+		hd.dealAmount, hd.dealYear, hd.dealMonth, hd.dealDay,
+		hd.area, hd.floor
+		from
+		homedb.houseinfo hi
 		join homedb.housedeal hd
-		on hi.aptCode = hd.aptCode
+		on
+		hi.aptCode = hd.aptCode
 		where hi.aptCode=#{aptCode};
 	</select>
+
+	<!-- <resultMap type="apart" id="amointMap">
+		<result column="article_no" property="articleNo" />
+		<result column="user_id" property="dealYear" />
+	</resultMap> -->
+
+	<select id="getAmount" parameterType="map"
+		resultType="apart">
+		select
+		max(dealAmount) dealAmount, dealYear from
+		homedb.housedeal where
+		aptCode=#{aptCode}
+		group by dealYear having dealYear <![CDATA[>=]]> 2015
+	</select>
+
 
 </mapper>

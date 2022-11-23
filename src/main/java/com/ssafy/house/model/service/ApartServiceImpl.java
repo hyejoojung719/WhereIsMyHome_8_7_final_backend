@@ -55,9 +55,16 @@ public class ApartServiceImpl implements ApartService{
 
 	// 아파트 상세 조회
 	@Override
-	public Apart getDetailApart(HashMap<String, Object> map) throws Exception {
+	public List<Apart> getDetailApart(HashMap<String, Object> map) throws Exception {
 		// TODO Auto-generated method stub
 		return apartMapper.getDetailApart(map);
+	}
+
+	// 아파트 년도별 최대 거래 금액 가져오기
+	@Override
+	public List<Apart> getAmount(HashMap<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		return apartMapper.getAmount(map);
 	}
 
 	
