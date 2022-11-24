@@ -53,7 +53,7 @@
 
 	<select id="searchApart" parameterType="map" resultType="apart">
 		select
-		apartmentName, lat, lng
+		apartmentName, lat, lng, buildYear, dongCode, aptCode
 		from houseinfo
 		where apartmentName like
 		CONCAT('%',#{keyword},'%')
