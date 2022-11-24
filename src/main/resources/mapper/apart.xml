@@ -13,9 +13,9 @@
 	<!-- 관심 아파트 기능 시작 -->
 	<select id="getMyApartInfo" parameterType="map"
 		resultType="apart">
-		select distinct hi.aptCode, hi.buildYear, hi.apartmentName, hi.dongCode,
+		select distinct hi.aptCode, hi.buildYear, hi.apartmentName, 
 		hi.dong,
-		hi.jibun, hi.lng, hi.lat
+		hi.jibun, hi.lng, hi.lat, hi.dongCode
 		from houseinfo hi
 		join housedeal hd
 		on
