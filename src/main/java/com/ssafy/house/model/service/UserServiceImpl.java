@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.house.dto.User;
@@ -21,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	UserMapper userMapper;
-
+	
 	@Override
 	public int insertUser(User user) throws SQLException {
 		int cnt_user = userMapper.insertUser(user);
@@ -129,26 +130,24 @@ public class UserServiceImpl implements UserService {
 		String fromName = "집콕";
 		String subject = "집콕 임시 비밀번호입니다.";
 		String msg = "";
-		
-		msg += "<h3 style=\"margin: 1em 0px; padding: 0px; display: block; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: -0.5px; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: -webkit-center; background-color: rgb(255, 255, 255);\">\r\n" + 
-				"  <span style=\"font-style: normal; font-family: Meiryo, sans-serif; color: rgb(162,123,92); font-weight: bold; background-color: rgba(0, 0, 0, 0); font-size: 18px; text-decoration: underline;\">\r\n" + 
-				"    <strong style=\"font-family: Meiryo, sans-serif; color: rgb(162, 123, 92);\">집콕</strong>\r\n" + 
-				"  </span>\r\n" + 
-				"  <span style=\"font-style: normal;font-family: Meiryo, sans-serif;color: rgb(63, 78, 79);font-weight: bold;background-color: rgba(0, 0, 0, 0);\">\r\n" + 
-				"    <strong style=\"font-style: normal;font-family: Meiryo, sans-serif;color: rgb(63,78,79);\">\r\n" + 
-				"      <strong>의 임시&nbsp;비밀번호&nbsp;입니다.&nbsp;비밀번호를&nbsp;변경하여&nbsp;사용하세요.</strong>\r\n" + 
-				"    </strong>\r\n" + 
-				"  </span>\r\n" + 
-				"  <strong style=\"font-style: normal; font-family: &quot;Malgun Gothic&quot;, &quot;맑은 고딕&quot;, -apple-system, BlinkMacSystemFont, system-ui, &quot;Apple SD Gothic Neo&quot;, &quot;Helvetica Neue&quot;, Helvetica, Arial, Dotum, 돋움, sans-serif; color: rgb(0, 0, 0);\"></strong>\r\n" + 
-				"</h3>\r\n" + 
-				"<strong style=\"color: rgb(0, 0, 0);font-family: &quot;Malgun Gothic&quot;, &quot;맑은 고딕&quot;, -apple-system, BlinkMacSystemFont, system-ui, &quot;Apple SD Gothic Neo&quot;, &quot;Helvetica Neue&quot;, Helvetica, Arial, Dotum, 돋움, sans-serif;font-size: 14px;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;letter-spacing: -0.5px;orphans: 2;text-align: start;text-indent: 0px;text-transform: none;white-space: normal;widows: 2;word-spacing: 0px;-webkit-text-stroke-width: 0px;background-color: rgb(255, 255, 255);text-decoration-thickness: initial;text-decoration-style: initial;text-decoration-color: initial;\"></strong>\r\n" + 
-				"<h3 style=\"margin: 1em 0px; padding: 0px; display: block; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: -0.5px; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: -webkit-center; background-color: rgb(255, 255, 255);\"></h3>\r\n" + 
-				"<div style=\"font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: -0.5px; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">\r\n" + 
-				"  <br>\r\n" + 
-				"</div>\r\n" + 
-				"<div style=\"font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: -0.5px; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;\">\r\n" + 
-				"  <span style=\"color: rgb(0, 0, 0); background-color: rgba(0, 0, 0, 0); font-size: 14px; font-style: normal; font-weight: 400; font-family: &quot;Malgun Gothic&quot;, &quot;맑은 고딕&quot;, -apple-system, BlinkMacSystemFont, system-ui, &quot;Apple SD Gothic Neo&quot;, &quot;Helvetica Neue&quot;, Helvetica, Arial, Dotum, 돋움, sans-serif;\">임시&nbsp;비밀번호&nbsp;:&nbsp;"+user.getUser_password()+"</span>\r\n" + 
-				"</div>";
+
+		msg += "<h3 style=\"margin: 1em 0px; padding: 0px; display: block; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: -0.5px; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: -webkit-center; background-color: rgb(255, 255, 255);\">\r\n"
+				+ "  <span style=\"font-style: normal; font-family: Meiryo, sans-serif; color: rgb(162,123,92); font-weight: bold; background-color: rgba(0, 0, 0, 0); font-size: 18px; text-decoration: underline;\">\r\n"
+				+ "    <strong style=\"font-family: Meiryo, sans-serif; color: rgb(162, 123, 92);\">집콕</strong>\r\n"
+				+ "  </span>\r\n"
+				+ "  <span style=\"font-style: normal;font-family: Meiryo, sans-serif;color: rgb(63, 78, 79);font-weight: bold;background-color: rgba(0, 0, 0, 0);\">\r\n"
+				+ "    <strong style=\"font-style: normal;font-family: Meiryo, sans-serif;color: rgb(63,78,79);\">\r\n"
+				+ "      <strong>의 임시&nbsp;비밀번호&nbsp;입니다.&nbsp;비밀번호를&nbsp;변경하여&nbsp;사용하세요.</strong>\r\n"
+				+ "    </strong>\r\n" + "  </span>\r\n"
+				+ "  <strong style=\"font-style: normal; font-family: &quot;Malgun Gothic&quot;, &quot;맑은 고딕&quot;, -apple-system, BlinkMacSystemFont, system-ui, &quot;Apple SD Gothic Neo&quot;, &quot;Helvetica Neue&quot;, Helvetica, Arial, Dotum, 돋움, sans-serif; color: rgb(0, 0, 0);\"></strong>\r\n"
+				+ "</h3>\r\n"
+				+ "<strong style=\"color: rgb(0, 0, 0);font-family: &quot;Malgun Gothic&quot;, &quot;맑은 고딕&quot;, -apple-system, BlinkMacSystemFont, system-ui, &quot;Apple SD Gothic Neo&quot;, &quot;Helvetica Neue&quot;, Helvetica, Arial, Dotum, 돋움, sans-serif;font-size: 14px;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;letter-spacing: -0.5px;orphans: 2;text-align: start;text-indent: 0px;text-transform: none;white-space: normal;widows: 2;word-spacing: 0px;-webkit-text-stroke-width: 0px;background-color: rgb(255, 255, 255);text-decoration-thickness: initial;text-decoration-style: initial;text-decoration-color: initial;\"></strong>\r\n"
+				+ "<h3 style=\"margin: 1em 0px; padding: 0px; display: block; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: -0.5px; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: -webkit-center; background-color: rgb(255, 255, 255);\"></h3>\r\n"
+				+ "<div style=\"font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: -0.5px; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">\r\n"
+				+ "  <br>\r\n" + "</div>\r\n"
+				+ "<div style=\"font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: -0.5px; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;\">\r\n"
+				+ "  <span style=\"color: rgb(0, 0, 0); background-color: rgba(0, 0, 0, 0); font-size: 14px; font-style: normal; font-weight: 400; font-family: &quot;Malgun Gothic&quot;, &quot;맑은 고딕&quot;, -apple-system, BlinkMacSystemFont, system-ui, &quot;Apple SD Gothic Neo&quot;, &quot;Helvetica Neue&quot;, Helvetica, Arial, Dotum, 돋움, sans-serif;\">임시&nbsp;비밀번호&nbsp;:&nbsp;"
+				+ user.getUser_password() + "</span>\r\n" + "</div>";
 
 		// 받는 사람 E-mail 주소
 		String toEmail = user.getUser_id();
@@ -173,4 +172,20 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 	}
+
+	@Override
+	public List<User> selectUserListAll() throws SQLException {
+		return userMapper.selectUserListAll();
+	}
+
+	@Override
+	public int deleteUserList(List<User> userList) throws SQLException {
+		int cnt = 0;
+		for(User user : userList) {
+			cnt += deleteUser(user.getUser_id());
+		}
+		return cnt;
+	}
+	
+	
 }

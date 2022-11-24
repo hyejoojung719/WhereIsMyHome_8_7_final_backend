@@ -27,4 +27,6 @@ public interface UserMapper {
 	int deleteUser(Map<String, Object> map) throws SQLException;
 
 	int idCheck(Map<String, Object> map) throws SQLException;
+
+	List<User> selectUserListAll() throws SQLException;
 }

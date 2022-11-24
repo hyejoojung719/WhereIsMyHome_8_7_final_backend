@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang3.RandomStringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -18,10 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -202,6 +200,38 @@ public class UserController {
 		int cnt = userService.deleteUser(user_id);
 
 		if (cnt == 1) {
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	//관리자 - 회원 정보 조회
+	@ResponseBody
+	@PostMapping(value="/admin/list")
+	public ResponseEntity<?> adminUserList(@RequestHeader(value="access-token") String token, String user_id) throws SQLException {
+		log.debug("adminUserList() 메소드 요청");
+		
+		log.debug("user_id : {}", user_id);
+		List<User> userList = userService.selectUserListAll();
+		
+		if(!userList.isEmpty()) {
+			return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@ResponseBody
+	@Transactional
+	@PatchMapping(value="/admin")
+	public ResponseEntity<?> adminDeleteUserList(@RequestHeader(value="access-token") String token, @RequestBody List<User> userList) throws SQLException {
+		log.debug("adminDeleteUserList() 메소드 요청");
+//		log.debug("user_id : {}", user_id);
+		
+		int cnt = userService.deleteUserList(userList);
+		
+		if(cnt == userList.size()) {
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);

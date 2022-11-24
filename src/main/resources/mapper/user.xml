@@ -77,4 +77,9 @@
 		from user
 		where user_id = #{user_id}
 	</select>
+	
+	<select id="selectUserListAll" resultType="user">
+		select user_id, user_name, user_birth
+		from user
+	</select>
 </mapper>

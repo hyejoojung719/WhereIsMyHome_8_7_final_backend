@@ -28,4 +28,8 @@ public interface UserService {
 	String findPassword(User user) throws SQLException;
 	
 	Boolean sendEmail(User user) throws Exception;
+
+	List<User> selectUserListAll() throws SQLException;
+
+	int deleteUserList(List<User> userList) throws SQLException;
 }
