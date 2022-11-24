@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -17,10 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -94,20 +93,19 @@ public class UserController {
 	
 	// 비밀번호 찾기
 	@ResponseBody
-	@PostMapping(value = "/findPwd")
-	public ResponseEntity<?> findpwd(@RequestBody User user) throws SQLException {
+	@GetMapping(value="/find")
+	public ResponseEntity<?> findpwd(String user_id) throws SQLException {
 		log.debug("findpwd() 메소드 요청");
 
-		User selectUser = userService.selectUserInfo(user.getUser_id());
+		User selectUser = userService.selectUserInfo(user_id);
 		log.debug("selectUser : {}", selectUser.toString());
-		if (selectUser != null) {
-			log.debug("user : {}", user.toString());
-			if (selectUser.getUser_name().equals(user.getUser_name())) {
-				return new ResponseEntity<String>(selectUser.getUser_password(), HttpStatus.OK);
-			}
+		if (selectUser == null) {
+			return new ResponseEntity<String>("등록되지 않은 이메일입니다.", HttpStatus.OK);
+		} else {
+			//임시 비밀번호 생성
+			String msg = userService.findPassword(selectUser);
+			return new ResponseEntity<String>(msg, HttpStatus.OK);
 		}
-
-		return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	// 회원 가입 => 중복된 회원인지 체크, db에 회원 정보 등록
@@ -202,6 +200,38 @@ public class UserController {
 		int cnt = userService.deleteUser(user_id);
 
 		if (cnt == 1) {
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	//관리자 - 회원 정보 조회
+	@ResponseBody
+	@PostMapping(value="/admin/list")
+	public ResponseEntity<?> adminUserList(@RequestHeader(value="access-token") String token, String user_id) throws SQLException {
+		log.debug("adminUserList() 메소드 요청");
+		
+		log.debug("user_id : {}", user_id);
+		List<User> userList = userService.selectUserListAll();
+		
+		if(!userList.isEmpty()) {
+			return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@ResponseBody
+	@Transactional
+	@PatchMapping(value="/admin")
+	public ResponseEntity<?> adminDeleteUserList(@RequestHeader(value="access-token") String token, @RequestBody List<User> userList) throws SQLException {
+		log.debug("adminDeleteUserList() 메소드 요청");
+//		log.debug("user_id : {}", user_id);
+		
+		int cnt = userService.deleteUserList(userList);
+		
+		if(cnt == userList.size()) {
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
