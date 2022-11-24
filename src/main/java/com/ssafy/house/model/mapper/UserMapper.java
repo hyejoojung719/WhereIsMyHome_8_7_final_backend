@@ -29,4 +29,6 @@ public interface UserMapper {
 	int idCheck(Map<String, Object> map) throws SQLException;
 
 	List<User> selectUserListAll() throws SQLException;
+
+	User selectUserRoleById(Map<String,Object> map) throws SQLException;
 }

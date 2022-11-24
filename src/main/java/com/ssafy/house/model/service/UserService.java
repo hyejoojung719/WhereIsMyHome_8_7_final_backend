@@ -32,4 +32,6 @@ public interface UserService {
 	List<User> selectUserListAll() throws SQLException;
 
 	int deleteUserList(List<User> userList) throws SQLException;
+
+	User getAuthority(String user_id) throws SQLException;
 }

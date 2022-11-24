@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.house.dto.User;
 import com.ssafy.house.model.service.UserService;
 
@@ -81,19 +83,19 @@ public class UserController {
 		}
 	}
 
-	//아이디 찾기
+	// 아이디 찾기
 	@ResponseBody
-	@PostMapping(value="/find")
+	@PostMapping(value = "/find")
 	public ResponseEntity<?> findid(@RequestBody User user) throws SQLException {
 		log.debug("findid() 메소드 요청");
-		
+
 		List<Map<String, String>> selectUserList = userService.selectUserId(user);
 		return new ResponseEntity<List<Map<String, String>>>(selectUserList, HttpStatus.OK);
 	}
-	
+
 	// 비밀번호 찾기
 	@ResponseBody
-	@GetMapping(value="/find")
+	@GetMapping(value = "/find")
 	public ResponseEntity<?> findpwd(String user_id) throws SQLException {
 		log.debug("findpwd() 메소드 요청");
 
@@ -102,7 +104,7 @@ public class UserController {
 		if (selectUser == null) {
 			return new ResponseEntity<String>("등록되지 않은 이메일입니다.", HttpStatus.OK);
 		} else {
-			//임시 비밀번호 생성
+			// 임시 비밀번호 생성
 			String msg = userService.findPassword(selectUser);
 			return new ResponseEntity<String>(msg, HttpStatus.OK);
 		}
@@ -184,7 +186,8 @@ public class UserController {
 
 	// 회원 탈퇴 => db에서 지우고 세션 지우기
 	@DeleteMapping
-	public ResponseEntity<?> deleteUser(@RequestHeader(value = "access-token") String token) throws SQLException, ParseException {
+	public ResponseEntity<?> deleteUser(@RequestHeader(value = "access-token") String token)
+			throws SQLException, ParseException {
 		log.debug("deleteUser() 메소드 요청");
 
 		String decodedToken = new String(Base64.getDecoder().decode(token.split("\\.")[1]));
@@ -195,7 +198,7 @@ public class UserController {
 		JSONObject jsonObject = (JSONObject) jsonParser.parse(decodedToken);
 		// userId 값 추출
 		String user_id = (String) jsonObject.get("userId");
-		
+
 		log.debug("user_id : {}", user_id);
 		int cnt = userService.deleteUser(user_id);
 
@@ -205,34 +208,76 @@ public class UserController {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	//관리자 - 회원 정보 조회
+
+	// 관리자 - 회원 정보 조회
 	@ResponseBody
-	@PostMapping(value="/admin/list")
-	public ResponseEntity<?> adminUserList(@RequestHeader(value="access-token") String token, String user_id) throws SQLException {
+	@PostMapping(value = "/admin/list")
+	public ResponseEntity<?> adminUserList(@RequestHeader(value = "access-token") String token, @RequestBody User user)
+			throws SQLException, ParseException {
 		log.debug("adminUserList() 메소드 요청");
-		
+		String user_id = user.getUser_id();
 		log.debug("user_id : {}", user_id);
-		List<User> userList = userService.selectUserListAll();
 		
-		if(!userList.isEmpty()) {
-			return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
+		String decodedToken = new String(Base64.getDecoder().decode(token.split("\\.")[1]));
+
+		// JSONParser 생성
+		JSONParser jsonParser = new JSONParser();
+		// JSONParser를 통해 JSONObject 생성
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(decodedToken);
+		// userId 값 추출
+		String token_user_id = (String) jsonObject.get("userId");
+
+		String user_role = userService.getAuthority(user_id).getUser_role();
+		String token_user_role = userService.getAuthority(token_user_id).getUser_role();
+		if (user_role.equals("ADMIN") && token_user_role.equals("ADMIN")) {
+			List<User> userList = userService.selectUserListAll();
+
+			if (!userList.isEmpty()) {
+				return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		} else {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@ResponseBody
-	@Transactional
-	@PatchMapping(value="/admin")
-	public ResponseEntity<?> adminDeleteUserList(@RequestHeader(value="access-token") String token, @RequestBody List<User> userList) throws SQLException {
+	@PatchMapping(value = "/admin")
+	public ResponseEntity<?> adminDeleteUserList(@RequestHeader(value = "access-token") String token,
+			@RequestBody HashMap<String, Object> map) throws SQLException, ParseException {
 		log.debug("adminDeleteUserList() 메소드 요청");
-//		log.debug("user_id : {}", user_id);
 		
-		int cnt = userService.deleteUserList(userList);
+		//타입 Cast 문제로 인해 아래의 형태
+		ObjectMapper mapper = new ObjectMapper();
+		List<User> userList = mapper.convertValue(map.get("selected"), new TypeReference<List<User>>() {});
 		
-		if(cnt == userList.size()) {
-			return new ResponseEntity<Void>(HttpStatus.OK);
+		log.debug("userList : {}", userList);
+		
+		String user_id = (String) map.get("user_id");
+		
+		String decodedToken = new String(Base64.getDecoder().decode(token.split("\\.")[1]));
+
+		// JSONParser 생성
+		JSONParser jsonParser = new JSONParser();
+		// JSONParser를 통해 JSONObject 생성
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(decodedToken);
+		// userId 값 추출
+		String token_user_id = (String) jsonObject.get("userId");
+
+		String user_role = userService.getAuthority(user_id).getUser_role();
+		String token_user_role = userService.getAuthority(token_user_id).getUser_role();
+		
+		// 회원 자격 검색 후 삭제 진행
+		if (user_role.equals("ADMIN") && token_user_role.equals("ADMIN")) {
+			int cnt = userService.deleteUserList(userList);
+
+			if (cnt == userList.size()) {
+				return new ResponseEntity<Void>(HttpStatus.OK);
+			} else {
+				return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
 		} else {
 			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

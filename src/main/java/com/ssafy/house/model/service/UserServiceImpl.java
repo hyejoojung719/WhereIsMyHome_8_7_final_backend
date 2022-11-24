@@ -186,6 +186,13 @@ public class UserServiceImpl implements UserService {
 		}
 		return cnt;
 	}
+
+	@Override
+	public User getAuthority(String user_id) throws SQLException {
+		Map<String, Object> map = new HashMap<>();
+		map.put("user_id", user_id);
+		return userMapper.selectUserRoleById(map);
+	}
 	
 	
 }
