@@ -13,7 +13,7 @@
 	<!-- 관심 아파트 기능 시작 -->
 	<select id="getMyApartInfo" parameterType="map"
 		resultType="apart">
-		select distinct hi.aptCode, hi.buildYear, hi.apartmentName,
+		select distinct hi.aptCode, hi.buildYear, hi.apartmentName, hi.dongCode,
 		hi.dong,
 		hi.jibun, hi.lng, hi.lat
 		from houseinfo hi
