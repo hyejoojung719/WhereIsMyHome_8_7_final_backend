@@ -24,4 +24,8 @@ public interface UserService {
 	int deleteUser(String user_id) throws SQLException;
 
 	int idCheck(String user_id) throws SQLException;
+	
+	String findPassword(User user) throws SQLException;
+	
+	Boolean sendEmail(User user) throws Exception;
 }
